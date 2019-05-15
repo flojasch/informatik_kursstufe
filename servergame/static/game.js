@@ -1,4 +1,5 @@
 var socket = io();
+let img;
 
 var movement = {
   up: false,
@@ -8,6 +9,7 @@ var movement = {
 }
 
 function setup() {
+  img = loadImage('static/jupitermap.jpg');
   createCanvas(windowWidth, windowHeight, WEBGL);
   ambientLight(50);
   directionalLight(200, 200, 200, -1, 1, -1);
@@ -56,12 +58,16 @@ socket.on('state', function (players) {
   background(0);
   for (var id in players) {
     var player = players[id];
-    push();
-    translate(player.x, player.y, 0);
-    rotateY(millis() / 1000);
-    //texture(img);
-    noStroke();
-    sphere(100);
-    pop();
+    show(player.x,player.y,0);
   }
 });
+
+function show(x,y,z){
+  push();
+  translate(x, y, z);
+  rotateY(millis() / 1000);
+  texture(img);
+  noStroke();
+  sphere(100);
+  pop();
+}
