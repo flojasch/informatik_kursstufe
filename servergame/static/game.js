@@ -6,6 +6,9 @@ let projectiles = [];
 let playerpos = 500;
 let myId = 0;
 let me;
+let lasersound;
+let bombsound;
+
 
 var movement = {
   up: false,
@@ -22,6 +25,9 @@ function setup() {
   // img = loadImage('static/jupitermap.jpg');
   earthimg = loadImage('static/earth.jpg');
   spaceship = loadModel('static/teapot.obj', true);
+  expimg = loadImage('static/explosion.jpg');
+  lasersound = loadSound('static/laser.wav');
+  bombsound = loadSound('static/bomb.wav');
   createCanvas(windowWidth, windowHeight, WEBGL);
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 4; j++) {
@@ -57,6 +63,7 @@ document.addEventListener('keydown', function (event) {
       break;
     case 32: //space
       movement.projectile = true;
+      lasersound.play();
   }
 });
 document.addEventListener('keyup', function (event) {
@@ -81,6 +88,7 @@ document.addEventListener('keyup', function (event) {
       break;
     case 32: //space
       movement.projectile = false;
+
   }
 });
 
@@ -115,12 +123,20 @@ socket.on('state', function (players) {
   for (let planet of planets) {
     planet.show();
   }
+  updateProjectiles();
+
+  pop();
+});
+
+function updateProjectiles() {
   for (let i = 0; i < projectiles.length; i++) {
     projectiles[i].update();
     projectiles[i].show();
+    if (abs(projectiles[i].x) > 6000 || abs(projectiles[i].y) > 6000 || abs(projectiles[i].z) > 6000) {
+      projectiles.splice(i, 1);
+    }
   }
-  pop();
-});
+}
 
 function showMe(player) {
   translate(0, 0, playerpos);

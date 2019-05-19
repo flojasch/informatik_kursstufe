@@ -18,24 +18,29 @@ class Planet {
 
 class Projectile {
   constructor(x, y, z, xAngle, yAngle) {
-    this.pos = createVector(x, y, z);
-    this.speed = 40;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.v = 20;
     this.xAngle = xAngle;
     this.yAngle = yAngle;
-    this.dir = createVector(this.speed * sin(xAngle) * sin(yAngle), -this.speed * sin(xAngle) * cos(yAngle), this.speed * cos(xAngle));
   }
   show() {
     push();
-    translate(this.pos);
-    rotateX(this.xAngle+PI/2);
-    rotateY(this.yAngle);
+    translate(-this.x, -this.y, -this.z);
+    translate(0, 0, playerpos);
+    rotateY(-this.yAngle);
+    rotateX(-this.xAngle);
+    rotateX(PI / 2);
     noStroke();
     fill(color('magenta'));
     cylinder(20, 200);
     pop();
   }
   update() {
-    this.pos.sub(this.dir);
+    this.x += this.v * Math.sin(-this.yAngle) * Math.cos(this.xAngle);
+    this.y += this.v * Math.sin(this.xAngle);
+    this.z += this.v * Math.cos(this.yAngle) * Math.cos(this.xAngle);
   }
   hit(obj) {
     let dist = this.pos.dist(obj.pos);
