@@ -56,6 +56,16 @@ io.on('connection', function (socket) {
     if (data.backward) {
       newPos(-2, player);
     }
+    if (data.projectile) {
+      let projectile = {
+        x: player.x,
+        y: player.y,
+        z: player.z,
+        xAngle: player.xAngle,
+        yAngle: player.yAngle
+      };
+      io.sockets.emit('projectile', projectile);
+    }
   });
 });
 

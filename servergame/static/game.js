@@ -2,6 +2,7 @@ var socket = io();
 let img;
 let earthimg;
 let planets = [];
+let projectiles = [];
 let playerpos = 500;
 let myId = 0;
 let me;
@@ -12,7 +13,8 @@ var movement = {
   left: false,
   right: false,
   forward: false,
-  backward: false
+  backward: false,
+  projectile: false
 }
 
 
@@ -53,6 +55,8 @@ document.addEventListener('keydown', function (event) {
     case 83: //d
       movement.backward = true;
       break;
+    case 32: //space
+      movement.projectile = true;
   }
 });
 document.addEventListener('keyup', function (event) {
@@ -75,6 +79,8 @@ document.addEventListener('keyup', function (event) {
     case 83: //s
       movement.backward = false;
       break;
+    case 32: //space
+      movement.projectile = false;
   }
 });
 
@@ -84,6 +90,10 @@ socket.on('id', function (id) {
     myId = id;
   }
 });
+socket.on('projectile', function (p) {
+  let projectile = new Projectile(p.x, p.y, p.z, p.xAngle, p.yAngle);
+  projectiles.push(projectile);
+});
 
 setInterval(function () {
   socket.emit('movement', movement);
@@ -92,7 +102,7 @@ setInterval(function () {
 socket.on('state', function (players) {
   // console.log(players);
   background(0);
-  me=players[myId]||{};
+  me = players[myId] || {};
   push();
   showMe(me);
 
@@ -104,6 +114,10 @@ socket.on('state', function (players) {
   }
   for (let planet of planets) {
     planet.show();
+  }
+  for (let i = 0; i < projectiles.length; i++) {
+    projectiles[i].update();
+    projectiles[i].show();
   }
   pop();
 });
@@ -125,29 +139,14 @@ function showMe(player) {
 
 function showOthers(player) {
   push();
-  translate(player.x, player.y, player.z);
+  translate(-player.x, -player.y, -player.z);
+  translate(0, 0, playerpos);
+  rotateY(-player.yAngle);
+  rotateX(-player.xAngle);
   rotateX(PI);
   rotateY(-PI / 2);
   scale(0.4);
   normalMaterial();
   model(spaceship);
   pop();
-}
-
-class Planet {
-  constructor(x, y, z, r) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.r = r;
-  }
-  show() {
-    push();
-    translate(this.x, this.y, this.z);
-    rotateY(millis() / 1000);
-    texture(earthimg);
-    noStroke();
-    sphere(this.r);
-    pop();
-  }
 }
