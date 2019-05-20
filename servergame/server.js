@@ -32,6 +32,9 @@ io.on('connection', function (socket) {
     };
     io.sockets.emit('id', socket.id);
   });
+  socket.on('deleteplayer',function(id){
+    delete players[id];
+  }); 
   socket.on('movement', function (data) {
     var player = players[socket.id] || {};
     if (data.left) {
@@ -62,7 +65,8 @@ io.on('connection', function (socket) {
         y: player.y,
         z: player.z,
         xAngle: player.xAngle,
-        yAngle: player.yAngle
+        yAngle: player.yAngle,
+        id: socket.id
       };
       io.sockets.emit('projectile', projectile);
     }

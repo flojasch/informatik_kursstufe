@@ -3,11 +3,14 @@ let img;
 let earthimg;
 let planets = [];
 let projectiles = [];
+let explosions = [];
 let playerpos = 500;
 let myId = 0;
 let me;
 let lasersound;
 let bombsound;
+let score = 0;
+let text;
 
 
 var movement = {
@@ -29,6 +32,10 @@ function setup() {
   lasersound = loadSound('static/laser.wav');
   bombsound = loadSound('static/bomb.wav');
   createCanvas(windowWidth, windowHeight, WEBGL);
+  text = createP();
+  text.position(20, 20);
+  text.style('font-size', '200%');
+  text.style('color','ffffff');
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 4; j++) {
       for (let k = 0; k < 4; k++) {
@@ -99,8 +106,9 @@ socket.on('id', function (id) {
   }
 });
 socket.on('projectile', function (p) {
-  let projectile = new Projectile(p.x, p.y, p.z, p.xAngle, p.yAngle);
+  let projectile = new Projectile(p.x, p.y, p.z, p.xAngle, p.yAngle, p.id);
   projectiles.push(projectile);
+  console.log(p.id);
 });
 
 setInterval(function () {
@@ -110,6 +118,7 @@ setInterval(function () {
 socket.on('state', function (players) {
   // console.log(players);
   background(0);
+  text.html('Score: '+score);
   me = players[myId] || {};
   push();
   showMe(me);
@@ -123,12 +132,33 @@ socket.on('state', function (players) {
   for (let planet of planets) {
     planet.show();
   }
-  updateProjectiles();
-
+  updateProjectiles(players);
+  for (let i = 0; i < explosions.length; i++) {
+    explosions[i].update();
+    explosions[i].show();
+    if (explosions[i].time > 100) {
+      explosions.splice(i, 1);
+    }
+  }
   pop();
 });
 
-function updateProjectiles() {
+function updateProjectiles(players) {
+  for (let id in players) {
+    player = players[id];
+    for (let i = 0; i < projectiles.length; i++) {
+      if (projectiles[i].hit(player)) {
+        bombsound.play();
+        explosions.push(new Explosion(player.x, player.y, player.z));
+        if (projectiles[i].id === myId) {
+          score += 100;
+          console.log(score);
+        }
+        projectiles.splice(i, 1);
+        socket.emit('deleteplayer', id);
+      }
+    }
+  }
   for (let i = 0; i < projectiles.length; i++) {
     projectiles[i].update();
     projectiles[i].show();

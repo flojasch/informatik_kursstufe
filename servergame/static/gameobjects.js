@@ -17,13 +17,18 @@ class Planet {
 }
 
 class Projectile {
-  constructor(x, y, z, xAngle, yAngle) {
+  constructor(x, y, z, xAngle, yAngle,id) {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.pos = createVector(x, y, z);
     this.v = 20;
     this.xAngle = xAngle;
     this.yAngle = yAngle;
+    this.id=id;
+    for(let i=0;i<4;i++){
+      this.update();
+    }
   }
   show() {
     push();
@@ -34,7 +39,7 @@ class Projectile {
     rotateX(PI / 2);
     noStroke();
     fill(color('magenta'));
-    cylinder(20, 200);
+    cylinder(10, 80);
     pop();
   }
   update() {
@@ -42,34 +47,36 @@ class Projectile {
     this.y += this.v * Math.sin(this.xAngle);
     this.z += this.v * Math.cos(this.yAngle) * Math.cos(this.xAngle);
   }
-  hit(obj) {
-    let dist = this.pos.dist(obj.pos);
-    // console.log(dist);
-    return dist < obj.size;
+  hit(o) {
+    let dx = this.x - o.x;
+    let dy = this.y - o.y;
+    let dz = this.z - o.z;
+    let dist = dx * dx + dy * dy + dz * dz;
+    return dist < 40 * 40;
   }
 }
 
 class Explosion {
-  constructor(pos) {
-    this.pos = pos;
+  constructor(x,y,z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
     this.time = 0;
-    this.size = 200;
-    this.img = expimg;
-    this.speed = 30;
+    this.size = 10;
   }
   show() {
     push();
-    translate(this.pos);
+    translate(-this.x, -this.y, -this.z);
+    translate(0, 0, playerpos);
     noStroke();
-    texture(this.img);
+    texture(expimg);
     sphere(this.size);
     pop();
   }
   update() {
-    this.pos.sub(createVector(-this.speed * sin(xAngle) * sin(angle), this.speed * sin(xAngle) * cos(angle), -this.speed * cos(xAngle)));
-    this.time += 1;
+    this.time += 0.2;
     let t = (this.time - 5) * 0.5;
-    this.size = exp(-t * t) * 200;
+    this.size = exp(-t * t) * 50;
   }
 
 }
