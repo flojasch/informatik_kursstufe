@@ -23,18 +23,21 @@ server.listen(5000, function () {
 var players = {};
 io.on('connection', function (socket) {
   socket.on('new player', function () {
+    let xpos = Math.random() * 1000 - 500;
+    let ypos = Math.random() * 1000 - 500;
+    let zpos = Math.random() * 1000 - 500;
     players[socket.id] = {
-      x: 0,
-      y: 0,
-      z: 0,
+      x: xpos,
+      y: ypos,
+      z: zpos,
       xAngle: 0,
       yAngle: 0
     };
     io.sockets.emit('id', socket.id);
   });
-  socket.on('deleteplayer',function(id){
+  socket.on('deleteplayer', function (id) {
     delete players[id];
-  }); 
+  });
   socket.on('movement', function (data) {
     var player = players[socket.id] || {};
     if (data.left) {

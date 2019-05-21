@@ -11,6 +11,7 @@ let lasersound;
 let bombsound;
 let score = 0;
 let text;
+let fireBreak = 0;
 
 
 var movement = {
@@ -35,7 +36,7 @@ function setup() {
   text = createP();
   text.position(20, 20);
   text.style('font-size', '200%');
-  text.style('color','ffffff');
+  text.style('color', 'ffffff');
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 4; j++) {
       for (let k = 0; k < 4; k++) {
@@ -69,8 +70,12 @@ document.addEventListener('keydown', function (event) {
       movement.backward = true;
       break;
     case 32: //space
-      movement.projectile = true;
-      lasersound.play();
+      if (fireBreak == 0) {
+        movement.projectile = true;
+        lasersound.play();
+      } else {
+        movement.projectile = false;
+      }
   }
 });
 document.addEventListener('keyup', function (event) {
@@ -109,6 +114,10 @@ socket.on('projectile', function (p) {
   let projectile = new Projectile(p.x, p.y, p.z, p.xAngle, p.yAngle, p.id);
   projectiles.push(projectile);
   console.log(p.id);
+  if (p.id == myId) {
+    movement.projectile = false;
+    fireBreak = 30;
+  }
 });
 
 setInterval(function () {
@@ -118,7 +127,10 @@ setInterval(function () {
 socket.on('state', function (players) {
   // console.log(players);
   background(0);
-  text.html('Score: '+score);
+  if (fireBreak != 0) {
+    fireBreak--;
+  }
+  text.html('Score: ' + score);
   me = players[myId] || {};
   push();
   showMe(me);
@@ -134,9 +146,10 @@ socket.on('state', function (players) {
   }
   updateProjectiles(players);
   for (let i = 0; i < explosions.length; i++) {
-    explosions[i].update();
-    explosions[i].show();
-    if (explosions[i].time > 100) {
+    let exp=explosions[i];
+    exp.update();
+    exp.show();
+    if (exp.time > 100) {
       explosions.splice(i, 1);
     }
   }
@@ -144,26 +157,37 @@ socket.on('state', function (players) {
 });
 
 function updateProjectiles(players) {
-  for (let id in players) {
-    player = players[id];
-    for (let i = 0; i < projectiles.length; i++) {
-      if (projectiles[i].hit(player)) {
-        bombsound.play();
-        explosions.push(new Explosion(player.x, player.y, player.z));
-        if (projectiles[i].id === myId) {
-          score += 100;
-          console.log(score);
-        }
-        projectiles.splice(i, 1);
+  for (let i = 0; i < projectiles.length; i++) {
+    let deleteP = false;
+    let p = projectiles[i];
+    p.update();
+    p.show();
+    for (let id in players) {
+      player = players[id];
+      if (p.hit(player)) {
+        deleteP = true;
         socket.emit('deleteplayer', id);
       }
     }
-  }
-  for (let i = 0; i < projectiles.length; i++) {
-    projectiles[i].update();
-    projectiles[i].show();
-    if (abs(projectiles[i].x) > 6000 || abs(projectiles[i].y) > 6000 || abs(projectiles[i].z) > 6000) {
+    for (let j = 0; j < planets.length; j++) {
+      let pl = planets[j];
+      if (p.hit(pl)) {
+        deleteP = true;
+        planets.splice(j, 1);
+      }
+    }
+
+    if (abs(p.x) > 6000 || abs(p.y) > 6000 || abs(p.z) > 6000) {
       projectiles.splice(i, 1);
+    }
+    if (deleteP) {
+      projectiles.splice(i, 1);
+      bombsound.play();
+      explosions.push(new Explosion(p.x, p.y, p.z));
+      if (p.id === myId) {
+        score += 100;
+        console.log(score);
+      }
     }
   }
 }

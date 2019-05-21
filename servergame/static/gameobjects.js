@@ -7,7 +7,8 @@ class Planet {
   }
   show() {
     push();
-    translate(this.x, this.y, this.z);
+    translate(-this.x, -this.y, -this.z);
+    translate(0, 0, playerpos);
     rotateY(millis() / 1000);
     texture(earthimg);
     noStroke();
