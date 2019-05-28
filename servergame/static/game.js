@@ -10,8 +10,10 @@ let me;
 let lasersound;
 let bombsound;
 let score = 0;
+let lives = 4;
 let text;
 let fireBreak = 0;
+
 
 
 var movement = {
@@ -125,35 +127,35 @@ setInterval(function () {
 }, 1000 / 60);
 
 socket.on('state', function (players) {
-  // console.log(players);
-  background(0);
-  if (fireBreak != 0) {
-    fireBreak--;
-  }
-  text.html('Score: ' + score);
-  me = players[myId] || {};
-  push();
-  showMe(me);
+    // console.log(players);
+    background(0);
+    if (fireBreak != 0) {
+      fireBreak--;
+    }
+    text.html('Score: ' + score + '   Lives: ' + lives);
+    me = players[myId] || {};
+    push();
+    showMe(me);
 
-  for (var id in players) {
-    if (id != myId) {
-      var player = players[id];
-      showOthers(player);
+    for (var id in players) {
+      if (id != myId) {
+        var player = players[id];
+        showOthers(player);
+      }
     }
-  }
-  for (let planet of planets) {
-    planet.show();
-  }
-  updateProjectiles(players);
-  for (let i = 0; i < explosions.length; i++) {
-    let exp=explosions[i];
-    exp.update();
-    exp.show();
-    if (exp.time > 100) {
-      explosions.splice(i, 1);
+    for (let planet of planets) {
+      planet.show();
     }
-  }
-  pop();
+    updateProjectiles(players);
+    for (let i = 0; i < explosions.length; i++) {
+      let exp = explosions[i];
+      exp.update();
+      exp.show();
+      if (exp.time > 100) {
+        explosions.splice(i, 1);
+      }
+    }
+    pop();
 });
 
 function updateProjectiles(players) {
@@ -166,7 +168,9 @@ function updateProjectiles(players) {
       player = players[id];
       if (p.hit(player)) {
         deleteP = true;
-        socket.emit('deleteplayer', id);
+        if (id == myId) {
+          playerIsHit(id);
+        }
       }
     }
     for (let j = 0; j < planets.length; j++) {
@@ -189,6 +193,19 @@ function updateProjectiles(players) {
         console.log(score);
       }
     }
+  }
+}
+
+function playerIsHit(id) {
+  lives--;
+  if (lives == 0) {
+    let t = createP();
+    t.position(width / 2 - 300, height / 2 - 100);
+    t.style('font-size', '800%');
+    t.style('color', 'ff0000');
+    t.html('Game Over');
+    socket.emit('deleteplayer', id);
+
   }
 }
 
