@@ -31,7 +31,8 @@ io.on('connection', function (socket) {
       y: ypos,
       z: zpos,
       xAngle: 0,
-      yAngle: 0
+      yAngle: 0,
+      d: 20
     };
     io.sockets.emit('id', socket.id);
   });

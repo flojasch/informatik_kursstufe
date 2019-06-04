@@ -1,19 +1,47 @@
 class Planet {
-  constructor(x, y, z, r) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  constructor(r, v,d,m, img) {
+    this.d = d;
     this.r = r;
+    this.img = img;
+    this.v = v;
+    this.m = m;
+    this.setkoords();
+  }
+  setkoords(){
+    this.x=this.r.x;
+    this.y=this.r.y;
+    this.z=this.r.z;
   }
   show() {
     push();
     translate(-this.x, -this.y, -this.z);
     translate(0, 0, playerpos);
     rotateY(millis() / 1000);
-    texture(earthimg);
+    texture(this.img);
     noStroke();
-    sphere(this.r);
+    sphere(this.d);
     pop();
+  }
+  
+  static update(planets) {
+    let a = [];
+    for (let i = 0; i < planets.length; i++) {
+      a[i] = createVector(0, 0, 0);
+      for (let j = 0; j < planets.length; j++) {
+        if (j != i) {
+          let fij = p5.Vector.sub(planets[j].r, planets[i].r);
+          let dist = fij.mag();
+          fij.mult(planets[j].m / pow(dist, 3));
+          a[i].add(fij);
+        }
+      }
+    }
+    for (let i = 0; i < planets.length; i++) {
+      let p=planets[i];
+      p.v.add(a[i].mult(0.01));
+      p.r.add(p.v);
+      p.setkoords();
+    }
   }
 }
 
@@ -27,9 +55,9 @@ class Projectile {
     this.xAngle = xAngle;
     this.yAngle = yAngle;
     this.id=id;
-    for(let i=0;i<4;i++){
-      this.update();
-    }
+    // for(let i=0;i<4;i++){
+    //   this.update();
+    // }
   }
   show() {
     push();
@@ -53,7 +81,7 @@ class Projectile {
     let dy = this.y - o.y;
     let dz = this.z - o.z;
     let dist = dx * dx + dy * dy + dz * dz;
-    return dist < 40 * 40;
+    return dist < o.d * o.d;
   }
 }
 
