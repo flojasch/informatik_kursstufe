@@ -1,0 +1,61 @@
+<h2>Ein Multiplayer Browserspiel erstellen</h2>
+Der Server des Browserspiels wird ganz analog zum Chatserver aufgebaut. Zunächst laden und verwenden wir das socket.io und express Modul und sorgen dafür, dass wir die Dateien aus dem Ordner static ausliefern:
+<pre class="lang:default decode:true ">var express = require('express');
+var http = require('http');
+var path = require('path');
+var socketIO = require('socket.io');
+
+var app = express();
+var server = http.Server(app);
+var io = socketIO(server);
+
+app.set('port', 5000);
+app.use('/static', express.static(__dirname + '/static'));
+
+// Routing
+app.get('/', function (request, response) {
+  response.sendFile(path.join(__dirname, 'index.html'));
+});
+
+server.listen(5000, function () {
+  console.log('Starting server on port 5000');
+});
+
+</pre>
+Diesen Quelltext speicherst du in einer Datei namens server.js. Außerdem brauchst du im gleichen Ordner eine index.html Datei mit folgendem Inhalt:
+<pre class="lang:default decode:true ">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;A Multiplayer Game&lt;/title&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.min.js"&gt;&lt;/script&gt;
+    &lt;script src="/socket.io/socket.io.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+  &lt;script src="/static/game.js"&gt;&lt;/script&gt;
+&lt;/html&gt;</pre>
+Die Ordnerstruktur muss dabei die gleiche wie im Chatprogramm sein. Am einfachsten ist es, wenn du die node Module aus dem Ordner des Chatprogramms verwendest. Es ist natürlich trotzdem eine gute Übung, diese nochmals zu installieren. In dem static Ordner legst du eine game.js Datei an. Diese enthält folgende Grundelemente
+<pre class="lang:default decode:true">var socket = io();
+socket.emit('new player');
+
+function setup() {
+  createCanvas(500, 500);
+  background(100);
+}
+</pre>
+Startest du den Server mit node server.js und rufst im Browser localhost:5000 auf, so siehst du zunächst nur die Leinwand mit dunklem Hintergrund. Der Server reagiert noch nicht auf deine 'new player' Nachricht. Dies soll sich nun durch folgende Befehle ändern.
+<pre class="lang:default decode:true">let players = {};
+
+io.on('connection', function (socket) {
+  socket.on('new player', function () {
+    players[socket.id] = {
+      x: 200,
+      y: 200,
+    };
+    console.log(players);
+  });
+});</pre>
+<strong>Aufgabe:</strong> Starte den Server neu und Rufe aus mindestens drei verschiedenen Browsertabs localhst:5000 auf. Kannst du dir die Ausgaben auf der Konsole erklären?
+
+Der Server legt jetzt ein players Objekt an, in dem er die Daten der Spieler sammelt. Bisher sind es nur die Koordinaten und die id der Socket Verbindung, die als Bezeichner für die Koordinatenobjekte verwendet wird.

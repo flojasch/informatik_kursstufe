@@ -55,9 +55,6 @@ class Projectile {
     this.xAngle = xAngle;
     this.yAngle = yAngle;
     this.id=id;
-    // for(let i=0;i<4;i++){
-    //   this.update();
-    // }
   }
   show() {
     push();
