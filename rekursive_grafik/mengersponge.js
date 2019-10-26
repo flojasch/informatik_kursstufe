@@ -1,66 +1,52 @@
-
-var sponge = [];
+let gen;
+let slider;
+let angle;
 
 function setup() {
-createCanvas(windowHeight,windowHeight,WEBGL);
-ambientLight(200,200,200)
-var b = new Box(0,0,0,width);
-sponge.push(b);
+  createCanvas(windowHeight, windowHeight, WEBGL);
+  slider = createSlider(0, PI / 4, 0, 0.01);
 
+  gen = 0;
 }
 
-function mousePressed(){
-  var next = [];
-  for (var i = 0; i < sponge.length; i++) {
-    var b = sponge[i];
-    var newBoxes = b.generate();
-    next = next.concat(newBoxes);
-  }
-  sponge = next;
+function mousePressed() {
+  gen++;
 }
-
 
 function draw() {
-  background(51);
-  rotateX(frameCount * 0.01);
-  rotateY(frameCount * 0.01);
-  for (var i = 0; i < sponge.length; i++) {
-    var b = sponge[i];
-    b.show();
-  }
+  background(100);
+  directionalLight(250, 0, 0, -1, -1, -0.5);
+  ambientLight(100, 0, 0);
+  fill(250, 250, 250);
+  noStroke();
+  angle = slider.value();
+  rotateX(PI / 4);
+  rotateY(PI / 4);
+  menger(width / 2, 0);
 }
 
-
-function Box(x,y,z,r){
- this.x = x;
- this.y=y;
- this.z=z;
- this.r = r;
-
- this.show = function(){
-    push();
-    translate(this.x,this.y,this.z);
-    directionalLight(250, 250, 250, -1, -1, 0.25);
-    ambientMaterial(125,20,80);
-    noStroke();
-    box(this.r);
-    pop();
+function menger(r, g) {
+  if (g >= gen) {
+    box(r);
+    return;
   }
-this.generate = function(){
-  var boxes = [];
-  for(var i = -1; i < 2; i++){
-    for (var j = -1; j < 2; j++){
-      for (var k=-1; k< 2; k++){
-        var sum = abs(i) + abs(j) + abs(k);
-        var newR = this.r/3;
-        if(sum<=1){
-          var b = new Box(this.x+i*newR,this.y+j*newR,this.z+k*newR,newR);
-        boxes.push(b);
+
+  for (let i = -1; i < 2; i++) {
+    for (let j = -1; j < 2; j++) {
+      for (let k = -1; k < 2; k++) {
+        let sum = abs(i) + abs(j) + abs(k);
+        if (sum > 1) {
+          push();
+          let newr = r / 3;
+          translate(i * newr, j * newr, k * newr);
+          if (i == 1 && j == 1 && k == 1) {
+            rotateX(angle);
+            rotateY(angle);
+          }
+          menger(newr, g + 1);
+          pop();
+        }
       }
-     }
     }
   }
-    return boxes;
-  }
-
 }
