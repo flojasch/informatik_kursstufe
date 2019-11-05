@@ -3,7 +3,7 @@ let slider;
 let angle;
 
 function setup() {
-  createCanvas(windowHeight, windowHeight, WEBGL);
+  createCanvas(windowWidth, windowHeight, WEBGL);
   slider = createSlider(0, PI / 4, 0, 0.01);
 
   gen = 0;
@@ -20,9 +20,9 @@ function draw() {
   fill(250, 250, 250);
   noStroke();
   angle = slider.value();
-  rotateX(PI / 4);
-  rotateY(PI / 4);
-  menger(width / 2, 0);
+  rotateX(PI / 4*frameCount*0.01);
+  rotateY(PI / 4*frameCount*0.01);
+  menger(height / 2, 0);
 }
 
 function menger(r, g) {

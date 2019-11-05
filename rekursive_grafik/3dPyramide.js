@@ -14,9 +14,9 @@ function draw() {
   let locY = mouseY - width / 2;
 
   ambientLight(60, 60, 60);
-  pointLight(255, 255, 255, locX, locY, 100);
+  directionalLight(255, 255, 255, -1, -1,-0.5 );
   // directionalLight(-1,-1,-1);
-  rotateX(PI / 4);
+  //rotateX(PI / 4);
   rotateZ(frameCount * 0.01);
   rotateX(frameCount * 0.02);
   rotateY(frameCount * 0.01);
