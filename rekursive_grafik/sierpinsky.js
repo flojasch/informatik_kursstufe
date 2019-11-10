@@ -30,14 +30,15 @@ function sierpinsky(breite,gen,r,g,b){
     return;
   } 
   gen++;
-  sierpinsky(breite*0.5,gen,r+255/pow(2,gen),g,b);
+  let inkr=255/pow(2,gen);
+  sierpinsky(breite*0.5,gen,r+inkr,g,b);
   push();
   translate(breite*0.5,0);
-  sierpinsky(breite*0.5,gen,r,g+255/pow(2,gen),b);
+  sierpinsky(breite*0.5,gen,r,g+inkr,b);
   pop();
   push();
   translate(breite/4,-breite/2);
   rotate(alpha);
-  sierpinsky(breite*0.5,gen,r,g,b+255/pow(2,gen));
+  sierpinsky(breite*0.5,gen,r,g,b+inkr);
   pop();
 }
