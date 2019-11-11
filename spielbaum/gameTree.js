@@ -11,10 +11,10 @@ class GameTree {
 
   maxPlayer(alpha, beta) {
     if (this.isTerminal()) {
-      return heuristic(this.feld);
+      return this.value;
     }
     for (let child of this.children) {
-      alpha = max(alpha, child.minPlayer(alpha, beta));
+      alpha = Math.max(alpha, child.minPlayer(alpha, beta));
       if (alpha >= beta) {
         break;
       }
@@ -24,10 +24,10 @@ class GameTree {
 
   minPlayer(alpha, beta) {
     if (this.isTerminal()) {
-      return heuristic(this.feld);
+      return this.value;
     }
     for (let child of this.children) {
-      beta = min(beta, child.maxPlayer(alpha, beta));
+      beta = Math.min(beta, child.maxPlayer(alpha, beta));
       if (alpha >= beta) {
         break;
       }
@@ -42,8 +42,8 @@ class GameTree {
     if (this.isTerminal()) {
       let nextFields = this.feld.nextFields();
       for (let field of nextFields) {
-        let tree = new GameTree(field);
-        this.children.push(tree);
+        let node = new GameTree(field);
+        this.children.push(node);
       }
     } else {
       for (let child of this.children) {
@@ -60,7 +60,7 @@ class GameTree {
     let opt = -1;
     for (let child of this.children) {
       let val = child.minPlayer(-1, 1);
-      if (val > opt) {
+      if (val >= opt) {
         opt = val;
         res = child.feld.copy();
       }

@@ -5,7 +5,7 @@ class Spielfeld {
   }
 
   copy() {
-    return new Spielfeld(this.bricknumber);
+    return new Spielfeld(this.bricknumber,this.firstPlayer);
   }
 
   value() {

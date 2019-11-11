@@ -1,10 +1,12 @@
-let tree;
 
-function setup(){
-  let feld=new Spielfeld(5,true);
-  tree = new GameTree(feld);
-  tree.grow();
-  tree.grow();
-  tree.grow();
-  console.log(tree);
+let feld=new Spielfeld(5,true);
+let tree=new GameTree(feld);
+feld=tree.makeTurn(6);
+console.log(feld);
+
+function myTurn(bricknumber){
+  feld=new Spielfeld(bricknumber,true);
+  tree=new GameTree(feld);
+  feld=tree.makeTurn(6);
+  console.log(feld);
 }
