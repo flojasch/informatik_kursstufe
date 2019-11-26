@@ -67,4 +67,5 @@
     label = results[0].label;
     // Classifiy again!
     classifyVideo();
+    // console.log(results);
   }
