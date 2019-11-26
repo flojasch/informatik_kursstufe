@@ -52,21 +52,6 @@ class GameTree {
     }
   }
 
-  makeTurn(zugtiefe) {
-    for(let i=0;i<zugtiefe;i++){
-      this.grow();
-    }
-    let res;
-    let opt = -1;
-    for (let child of this.children) {
-      let val = child.minPlayer(-1, 1);
-      if (val >= opt) {
-        opt = val;
-        res = child.feld.copy();
-      }
-    }
-    console.log(opt);
-    return res;
-  }
+ 
 
 }

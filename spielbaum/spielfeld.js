@@ -5,7 +5,7 @@ class Spielfeld {
   }
 
   copy() {
-    return new Spielfeld(this.bricknumber,this.firstPlayer);
+    return new Spielfeld(this.bricknumber, this.firstPlayer);
   }
 
   value() {
@@ -21,10 +21,10 @@ class Spielfeld {
 
   nextFields() {
     let nextFields = [];
-    for (let i of [1, 2]) {
+    for (let i of [1, 2, 3]) {
       let bricknumber = this.bricknumber - i;
       if (bricknumber >= 1) {
-        nextFields.push(new Spielfeld(bricknumber,!this.firstPlayer));
+        nextFields.push(new Spielfeld(bricknumber, !this.firstPlayer));
       }
     }
     return nextFields;
