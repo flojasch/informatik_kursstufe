@@ -2,37 +2,39 @@ class GameTree {
   constructor(feld) {
     this.children = [];
     this.value = feld.value();
-    this.feld=feld;
+    this.feld = feld;
   }
 
   isTerminal() {
     return this.children.length == 0;
   }
 
-  maxPlayer(alpha, beta) {
+  maxPlayer() {
     if (this.isTerminal()) {
       return this.value;
     }
+    let opt = -1;
     for (let child of this.children) {
-      alpha = Math.max(alpha, child.minPlayer(alpha, beta));
-      if (alpha >= beta) {
-        break;
+      let val = child.minPlayer();
+      if (val >= opt) {
+        opt = val;
       }
     }
-    return alpha;
+    return opt;
   }
 
-  minPlayer(alpha, beta) {
+  minPlayer() {
     if (this.isTerminal()) {
       return this.value;
     }
+    let opt = 1;
     for (let child of this.children) {
-      beta = Math.min(beta, child.maxPlayer(alpha, beta));
-      if (alpha >= beta) {
-        break;
+      let val = child.minPlayer();
+      if (val <= opt) {
+        opt = val;
       }
     }
-    return beta;
+    return opt;
   }
 
   grow() {
@@ -52,6 +54,6 @@ class GameTree {
     }
   }
 
- 
+
 
 }
