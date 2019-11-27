@@ -54,6 +54,15 @@ class GameTree {
     }
   }
 
+  makeTurn(zugtiefe){
+    //hier musst du zunächst den Spielbaum "zugtiefe" mal wachsen lassen
 
+
+    //jetzt noch über die minPlayer() Methode den optimalen Zug auswählen
+
+
+    // am Ende noch das Spielfeld des optimalen Zugs zurückgeben
+
+  }
 
 }
