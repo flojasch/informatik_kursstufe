@@ -6,17 +6,22 @@ let array = [
   [0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0]
 ]
-let feld = new Spielfeld(array, true);
   
 function setup() {
-  let tree = new GameTree(feld);
-  // feld = tree.makeTurn(6);
-  alert(feld.print());
+  createCanvas(800, 800);
+  background(200);
+  feld = new Spielfeld(array, true);
+  tree = new GameTree(feld);
+  feld = tree.makeTurn(7);
 }
 
-function myTurn(slot) {
-  feld.putcoin(slot); //diese Methode muss noch in der Spielfeldklasse erstellt werden
+function mousePressed() {
+  feld.putcoin(floor(mouseX / 100));
   tree = new GameTree(feld);
-  feld = tree.makeTurn(6);
-  alert(feld);
+  feld = tree.makeTurn(7);
+}
+
+function draw() {
+  background(200);
+  feld.draw();
 }
