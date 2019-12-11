@@ -1,13 +1,6 @@
-
-function cp(array){
-  //hier muss eine Methode zum tiefen 
-  //kopieren von arrays erstellt werden
-  return ret;
-}
-
 class Spielfeld {
   constructor(array, firstPlayer) {
-    this.array = cp(array); //Achtung der array wird kopiert!!!
+    this.array = cp(array);
     this.firstPlayer = firstPlayer;
   }
 
@@ -68,7 +61,6 @@ class Spielfeld {
     }
     return 0;
   }
-
   draw() {
     fill(0, 0, 200);
     rect(0, 200, 700, 600);
@@ -90,12 +82,27 @@ class Spielfeld {
 
   nextFields() {
     let nextFields = [];
-    
-
+    for (let slot = 0; slot < 7; slot++) {
+      if (this.array[5][slot] == 0) {
+        let next = new Spielfeld(this.array, this.firstPlayer);
+        next.putcoin(slot);
+        nextFields.push(next);
+      }
+    }
     return nextFields;
   }
 
-  putCoin(slot){
+  putcoin(slot) {
+    let row = 5;
+    while (row >= 0 && this.array[row][slot] == 0) {
+      row--;
+    }
+    if (this.firstPlayer) {
+      this.array[row + 1][slot] = 1;
+    } else {
+      this.array[row + 1][slot] = -1;
+    }
+    this.firstPlayer = !this.firstPlayer;
+  }
 
-  }  
 }

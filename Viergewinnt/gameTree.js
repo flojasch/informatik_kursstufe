@@ -60,16 +60,18 @@ class GameTree {
       this.grow()
     }
     //jetzt noch über die minPlayer() Methode den optimalen Zug auswählen
-    let res;
-    let opt=-1;
+    let startchild=random(this.children);
+    let opt=startchild.minPlayer();
+    let res=startchild.feld.copy();
     for(let child of this.children){
       let val=child.minPlayer();
-      if(val>=opt){
+      if(val>opt){
         opt=val;
         res=child.feld.copy();
       }
     }
     // am Ende noch das Spielfeld des optimalen Zugs zurückgeben
+    console.log(opt);
     return res;
   }
 
